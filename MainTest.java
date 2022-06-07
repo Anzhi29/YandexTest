@@ -8,839 +8,839 @@ import org.testng.Assert;
 import java.time.Duration;
 import java.util.List;
 import java.util.Random;
-/**ïðîãðàììà ðàáîòàåò êîððåêòíî
- * ïðè êîäèðîâêå windows-1251*/
+/**программа работает корректно
+ * при кодировке windows-1251*/
 public class MainTest {
     public WebDriver driver;
-    public WebDriverWait wait;//ôóíêöèÿ äëÿ îæèäàíèÿ êîíêðåòíûõ äåéñòâèé äëÿ êîíêðåòíûõ ýëåìåíòîâ
+    public WebDriverWait wait;//функция для ожидания конкретных действий для конкретных элементов
     private WebElement we;
     private static boolean b;
     private static String s;
     private static int i, i2;
 
-    //âõîä â àêêàóíò
+    //вход в аккаунт
     @BeforeClass
     public void LogInAccount(){//WebDriver driver static
         try {
-            //ïîäêëþ÷åíèå äðàéâåðà äëÿ ðàáîòû ñ chrome
+            //подключение драйвера для работы с chrome
             System.setProperty("webdriver.chrome.driver",
                     "C:\\Program Files (x86)\\Google\\Driver\\101.0.4951.41\\chromedriver.exe");
 
             driver = new ChromeDriver();
             wait = new WebDriverWait(driver, Duration.ofSeconds(30));
-            //ðàçâåðíóòü íà âåñü ýêðàí
+            //развернуть на весь экран
             driver.manage().window().maximize();
-            //îòêðûòü ñòðàíèöó
+            //открыть страницу
             driver.get("https://mail.yandex.ru/?win=93&clid=1985545&uid=1370599934#inbox");
 
-            //îæèäàåò ìèíóòó èëè äî çàãðóçêè ñòðàíèöû
+            //ожидает минуту или до загрузки страницы
             driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(60));
-            //îæèäàåò 30 ñåêóíä èëè äî íàõîæäåíèÿ ýëåìåíòà
+            //ожидает 30 секунд или до нахождения элемента
             driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(30));
-            /* ïðèìåíèìî êî âñåì ýëåìåíòàì driver â ìåòîäå*/
+            /* применимо ко всем элементам driver в методе*/
 
-            //ïåðåéòè íà ñòðàíèöó àâòîðèçàöèè
+            //перейти на страницу авторизации
             driver.findElement(By.xpath("//a[@class='control button2 " +
                     "button2_view_classic button2_size_mail-big button2_theme_mail-white " +
                     "button2_type_link HeadBanner-Button HeadBanner-Button-Enter with-shadow']")).click();
 
-            //ââåñòè ëîãèí
+            //ввести логин
             driver.findElement(By.xpath("//input[@name='login']"))
                     .sendKeys("anzh.mats@yandex.ru");
 
-            //ïåðåéòè ê ââîäó ïàðîëÿ
+            //перейти к вводу пароля
             driver.findElement(By.xpath("//button[@id='passp:sign-in']")).click();
 
             wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//input[@name ='passwd']")));
 
-            // ââåñòè ïàðîëü A1b2c3d4e5f6G7
+            // ввести пароль A1b2c3d4e5f6G7
             driver.findElement(By.xpath("//input[@name" +
                     "='passwd']")).sendKeys("A1b2c3d4e5f6G7");
 
-            //âîéòè
+            //войти
             driver.findElement(By.xpath("//button[@id='passp:sign-in']")).click();
 
 
-            System.out.println("Àâòîðèçàöèÿ âûïîëíåíà\n");
+            System.out.println("Авторизация выполнена\n");
         }
         catch (Exception e){
-            System.out.println("Îøèáêà\n");
+            System.out.println("Ошибка\n");
         }
     }
 
-    //ïåðåêëþ÷åíèå ÿçûêà íà àíãëèéñêèé
-    @Test(priority = 1)
+    //переключение языка на английский
+    @Test (priority = 1)
     public void English(){
         try{
             System.out.println("YA-1.1:");
-            //ïåðåéòè íà ãëàâíóþ ñòðàíèöó ßíäåêñ.Ïî÷òà
+            //перейти на главную страницу Яндекс.Почта
             driver.findElement(By.xpath("//div[@class='PSHeaderIcon PSHeaderIcon_Mail']")).click();
 
-            Thread.sleep(2000);//îæèäàåò 2 ñåêóíäû (äî íà÷àëà çàãðóçêè ñòðàíèöû)
+            Thread.sleep(2000);//ожидает 2 секунды (до начала загрузки страницы)
 
-            //ïðîâåðÿåò, ñîâïàäàåò ëè ññûëêà ñ ãëàâíîé ñòðàíèöåé ßíäåêñ.Ïî÷òà
+            //проверяет, совпадает ли ссылка с главной страницей Яндекс.Почта
             b = driver.getCurrentUrl().contains("https://mail.yandex.ru/") &&
                     driver.getCurrentUrl().contains("uid=1625522601#tabs/relevant");
-            /** ññûëêà ðàçäåëÿåòñÿ íà ñîñòàâëÿþùèå êîìïîíåíòû,
-             * ò.ê. ñòðàíèöà ìîæåò èìåòü â àäðåñå
-             * íîìåð ýêçåìïëÿðà ñòðàíèöû(ïðåäïîëîæèòåëüíî)
+            /** ссылка разделяется на составляющие компоненты,
+             * т.к. страница может иметь в адресе
+             * номер экземпляра страницы(предположительно)
              *  */
-            Assert.assertTrue(b, "Îøèáêà\n");
-            System.out.println("1. Ñîâïàäåíèå");
+            Assert.assertTrue(b, "Ошибка\n");
+            System.out.println("1. Совпадение");
 
-            //ïåðåéòè â íàñòðîéêè
+            //перейти в настройки
             driver.findElement(By.xpath("//button[@class='Button2 Button2_view_clear mail-GhostButton " +
                     "mail-SettingsButton SettingsButton__hasNew--5shl0']")).click();
 
-            //ïðîâåðÿåò, òêðûâàåòñÿ ëè îêíî "Âñå íàñòðîéêè"
+            //проверяет, ткрывается ли окно "Все настройки"
             b = driver.findElements(By.xpath("//div[@class='Popup2 Popup2_visible " +
                     "Popup2_target_anchor Popup2_view_default SettingsButton__popup--q2Y0l " +
                     "Theme Theme_root_ps-light Theme_color_ps-light']")).size() > 0;
-            /** div èìååò ðàçíûé class ïðè îòêðûòîì è çàêðûòîì îêíå íàñòðîåê.
-             * Â óñëîâèè ñîçäà¸òñÿ ñïèñîê ýëåìåíòîâ,
-             * ÷åé òåã ñîîòâåòñâóåò îòêðûòîìó îêíó íàñòðîåê,
-             * è ïðîâåðÿåòñÿ íàëè÷èå ýëåìåíòîâ â ñïèñêå.
-             * Åñëè ñïèñîê ïóñò, çíà÷èò, îêíî íàñòðîåê íå îòêðûòî*/
-            Assert.assertTrue(b, "Îøèáêà\n");
-            System.out.println("2. Ñîâïàäåíèå");
+            /** div имеет разный class при открытом и закрытом окне настроек.
+             * В условии создаётся список элементов,
+             * чей тег соответсвует открытому окну настроек,
+             * и проверяется наличие элементов в списке.
+             * Если список пуст, значит, окно настроек не открыто*/
+            Assert.assertTrue(b, "Ошибка\n");
+            System.out.println("2. Совпадение");
 
-            //ïåðåéòè â äðóãèå íàñòðîéêè
+            //перейти в другие настройки
             driver.findElement(By.xpath("//a[@href='#setup/other']")).click();
 
-            //ïðîâåðÿåò, ñîâïàäàåò ëè òåêóùàÿ ññûëêà ñî ñòðàíèöåé íàñòðîåê
+            //проверяет, совпадает ли текущая ссылка со страницей настроек
             b = driver.getCurrentUrl().contains("https://mail.yandex.ru/") &&
                     driver.getCurrentUrl().contains("uid=1625522601#setup/other");
-            Assert.assertTrue(b, "Îøèáêà\n");
-            System.out.println("3. Ñîâïàäåíèå");
+            Assert.assertTrue(b, "Ошибка\n");
+            System.out.println("3. Совпадение");
 
-            //ðàñêðûòü âûïàäàþùèé ñïèñîê ÿçûêîâ
+            //раскрыть выпадающий список языков
             driver.findElement(By.xpath("//span[@class='b-selink ns-action']")).click();
 
-            //ïðîâåðÿåò, îòêðûëñÿ ëè âûïàäàþùèé ñïèñîê ÿçûêîâ
+            //проверяет, открылся ли выпадающий список языков
             b = driver.findElements
                     (By.xpath("//div[@class='b-mail-dropdown__box' ]")).size() > 0;
-            Assert.assertTrue(b, "Îøèáêà\n");
-            System.out.println("4. Ñîâïàäåíèå");
+            Assert.assertTrue(b, "Ошибка\n");
+            System.out.println("4. Совпадение");
 
-            //ïåðåêëþ÷èòü íà àíãëèéñêèé
+            //переключить на английский
             driver.findElement(By.xpath("//a[@data-params='lang=en']")).click();
 
-            Thread.sleep(2000);//îæèäàåò 2 ñåêóíäû (äî íà÷àëà çàãðóçêè ñòðàíèöû)
+            Thread.sleep(2000);//ожидает 2 секунды (до начала загрузки страницы)
 
-            //ïðîâåðÿåò, çàêðûëñÿ ëè âûïàäàþùèé ñïèñîê ÿçûêîâ è ïåðåêëþ÷èëñÿ ëè ÿçûê
+            //проверяет, закрылся ли выпадающий список языков и переключился ли язык
             b = driver.findElements(By.xpath("//div[@class='b-mail-dropdown__box' ]")).isEmpty()
                     && driver.findElements(By.xpath("//span[text()='English']")).size() > 0;
-            Assert.assertTrue(b, "Îøèáêà\n");
-            System.out.println("5. Ñîâïàäåíèå\n");
+            Assert.assertTrue(b, "Ошибка\n");
+            System.out.println("5. Совпадение\n");
         }
         catch (Exception e){
-            System.out.println("Îøèáêà: " + e + "\n");
+            System.out.println("Ошибка: " + e + "\n");
         }
     }
 
-    //ïåðåêëþ÷åíèå ÿçûêà íà ðóññêèé
-    @Test(priority = 2)
+    //переключение языка на русский
+    @Test (priority = 2)
     public void Russia(){
         try{
             System.out.println("YA-1.2:");
-            //ïåðåéòè íà ãëàâíóþ ñòðàíèöó ßíäåêñ.Ïî÷òà
+            //перейти на главную страницу Яндекс.Почта
             driver.findElement(By.xpath("//div[@class='PSHeaderIcon PSHeaderIcon_Mail']")).click();
 
-            Thread.sleep(2000);//îæèäàåò 2 ñåêóíäû (äî íà÷àëà çàãðóçêè ñòðàíèöû)
+            Thread.sleep(2000);//ожидает 2 секунды (до начала загрузки страницы)
 
-            //ïðîâåðÿåò, ñîâïàäàåò ëè ññûëêà ñ ãëàâíîé ñòðàíèöåé ßíäåêñ.Ïî÷òà
+            //проверяет, совпадает ли ссылка с главной страницей Яндекс.Почта
             b = driver.getCurrentUrl().contains("https://mail.yandex.ru/") &&
                     driver.getCurrentUrl().contains("uid=1625522601#tabs/relevant");
-            Assert.assertTrue(b, "Îøèáêà\n");
-            System.out.println("1. Ñîâïàäåíèå");
+            Assert.assertTrue(b, "Ошибка\n");
+            System.out.println("1. Совпадение");
 
-            //ïåðåéòè â íàñòðîéêè
+            //перейти в настройки
             driver.findElement(By.xpath("//button[@class='Button2 Button2_view_clear mail-GhostButton " +
                     "mail-SettingsButton SettingsButton__hasNew--5shl0']")).click();
 
-            //ïðîâåðÿåò, òêðûâàåòñÿ ëè îêíî "Âñå íàñòðîéêè"
+            //проверяет, ткрывается ли окно "Все настройки"
             b = driver.findElements(By.xpath("//div[@class='Popup2 Popup2_visible " +
                     "Popup2_target_anchor Popup2_view_default SettingsButton__popup--q2Y0l " +
                     "Theme Theme_root_ps-light Theme_color_ps-light']")).size() > 0;
-            Assert.assertTrue(b, "Îøèáêà\n");
-            System.out.println("2. Ñîâïàäåíèå");
+            Assert.assertTrue(b, "Ошибка\n");
+            System.out.println("2. Совпадение");
 
-            //ïåðåéòè â äðóãèå íàñòðîéêè
+            //перейти в другие настройки
             driver.findElement(By.xpath("//a[@href='#setup/other']")).click();
 
-            //ïðîâåðÿåò, ñîâïàäàåò ëè òåêóùàÿ ññûëêà ñî ñòðàíèöåé íàñòðîåê
+            //проверяет, совпадает ли текущая ссылка со страницей настроек
             b = driver.getCurrentUrl().contains("https://mail.yandex.ru/") &&
                     driver.getCurrentUrl().contains("uid=1625522601#setup/other");
-            Assert.assertTrue(b, "Îøèáêà\n");
-            System.out.println("3. Ñîâïàäåíèå");
+            Assert.assertTrue(b, "Ошибка\n");
+            System.out.println("3. Совпадение");
 
-            //ðàñêðûòü âûïàäàþùèé ñïèñîê ÿçûêîâ
+            //раскрыть выпадающий список языков
             driver.findElement(By.xpath("//span[@class='b-selink ns-action']")).click();
 
-            //ïðîâåðÿåò, îòêðûëñÿ ëè âûïàäàþùèé ñïèñîê ÿçûêîâ
+            //проверяет, открылся ли выпадающий список языков
             b = driver.findElements
                     (By.xpath("//div[@class='b-mail-dropdown__box' ]")).size() > 0;
-            Assert.assertTrue(b, "Îøèáêà\n");
-            System.out.println("4. Ñîâïàäåíèå");
+            Assert.assertTrue(b, "Ошибка\n");
+            System.out.println("4. Совпадение");
 
-            //ïåðåêëþ÷èòü íà ðóññêèé
+            //переключить на русский
             driver.findElement(By.xpath("//a[@data-params='lang=ru']")).click();
 
-            Thread.sleep(2000);//îæèäàåò 2 ñåêóíäû (äî íà÷àëà çàãðóçêè ñòðàíèöû)
+            Thread.sleep(2000);//ожидает 2 секунды (до начала загрузки страницы)
 
-            //ïðîâåðèòü, çàêðûëñÿ ëè âûïàäàþùèé ñïèñîê ÿçûêîâ
+            //проверить, закрылся ли выпадающий список языков
             b = driver.findElements(By.xpath("//div[@class='b-mail-dropdown__box' ]")).isEmpty()
-                    && driver.findElements(By.xpath("//span[text()='Ðóññêèé']")).size() > 0;
-            Assert.assertTrue(b, "Îøèáêà\n");
-            System.out.println("5. Ñîâïàäåíèå\n");
+                    && driver.findElements(By.xpath("//span[text()='Русский']")).size() > 0;
+            Assert.assertTrue(b, "Ошибка\n");
+            System.out.println("5. Совпадение\n");
         }
         catch (Exception e){
-            System.out.println("Îøèáêà: " + e + "\n");
+            System.out.println("Ошибка: " + e + "\n");
         }
     }
 
-    //Óäàëåíèå áåç âûáîðà ïèñåì äëÿ óäàëåíèÿ
-    @Test(priority = 3)
+    //Удаление без выбора писем для удаления
+    @Test (priority = 3)
     public void DeleteWithoutSelection(){
         try{
             System.out.println("YA-2:");
-            //ïåðåéòè íà ãëàâíóþ ñòðàíèöó ßíäåêñ.Ïî÷òà
+            //перейти на главную страницу Яндекс.Почта
             driver.findElement(By.xpath("//div[@class='PSHeaderIcon PSHeaderIcon_Mail']")).click();
 
-            Thread.sleep(2000);//îæèäàåò 2 ñåêóíäû (äî íà÷àëà çàãðóçêè ñòðàíèöû)
+            Thread.sleep(2000);//ожидает 2 секунды (до начала загрузки страницы)
 
-            //ïðîâåðÿåò, ñîâïàäàåò ëè ññûëêà ñ ãëàâíîé ñòðàíèöåé ßíäåêñ.Ïî÷òà
+            //проверяет, совпадает ли ссылка с главной страницей Яндекс.Почта
             b = driver.getCurrentUrl().contains("https://mail.yandex.ru/") &&
                     driver.getCurrentUrl().contains("uid=1625522601#tabs/relevant");
-            Assert.assertTrue(b, "Îøèáêà\n");
-            System.out.println("1. Ñîâïàäåíèå");
+            Assert.assertTrue(b, "Ошибка\n");
+            System.out.println("1. Совпадение");
 
-            //ïðîâåðÿåò êëèêàáåëüíîñòü êíîïêè óäàëåíèÿ
-            b = driver.findElement(By.xpath("//div[@title='Óäàëèòü (Delete)']")).
+            //проверяет кликабельность кнопки удаления
+            b = driver.findElement(By.xpath("//div[@title='Удалить (Delete)']")).
                     getAttribute("class").contains("is-disabled");
-            /**Â ßíäåêñ.Ïî÷òå êíîïêè èçìåíåíèÿ ñîñòîÿíèÿ âûáðàííûõ ïèñåì
-             * â òåãå div èìåþò â ñâî¸ì êëàññå çíà÷åíèå "is-disabled"*/
-            Assert.assertTrue(b, "Îøèáêà\n");
-            System.out.println("2. Ñîâïàäåíèå\n");
+            /**В Яндекс.Почте кнопки изменения состояния выбранных писем
+             * в теге div имеют в своём классе значение "is-disabled"*/
+            Assert.assertTrue(b, "Ошибка\n");
+            System.out.println("2. Совпадение\n");
         }
         catch (Exception e){
-            System.out.println("Îøèáêà: " + e + "\n");
+            System.out.println("Ошибка: " + e + "\n");
             return;
         }
     }
 
-    //Óäàëåíèå âûáðàííîãî ïèñüìà
-    @Test(priority = 4)
+    //Удаление выбранного письма
+    @Test (priority = 4)
     public void DeleteSelection(){
         try{
             System.out.println("YA-3:");
-            //ïåðåéòè íà ãëàâíóþ ñòðàíèöó ßíäåêñ.Ïî÷òà
+            //перейти на главную страницу Яндекс.Почта
             driver.findElement(By.xpath("//div[@class='PSHeaderIcon PSHeaderIcon_Mail']")).click();
 
-            Thread.sleep(2000);//îæèäàåò 2 ñåêóíäû (äî íà÷àëà çàãðóçêè ñòðàíèöû)
+            Thread.sleep(2000);//ожидает 2 секунды (до начала загрузки страницы)
 
-            //ïðîâåðÿåò, ñîâïàäàåò ëè ññûëêà ñ ãëàâíîé ñòðàíèöåé ßíäåêñ.Ïî÷òà
+            //проверяет, совпадает ли ссылка с главной страницей Яндекс.Почта
             b = driver.getCurrentUrl().contains("https://mail.yandex.ru/") &&
                     driver.getCurrentUrl().contains("uid=1625522601#tabs/relevant");
-            Assert.assertTrue(b, "Îøèáêà\n");
-            System.out.println("1. Ñîâïàäåíèå");
+            Assert.assertTrue(b, "Ошибка\n");
+            System.out.println("1. Совпадение");
 
-            //ñîçä¸ò ñïèñîê èç âñåõ ýëåìåíòîâ ñîîáùåíèé
+            //создёт список из всех элементов сообщений
             List<WebElement> listElements = driver.findElements(By.xpath("" +
                     "//span[@class='_nb-checkbox-flag _nb-checkbox-normal-flag']"));
 
-            //ïðîâåðÿåò íàëè÷èå ýëåìåíòîâ â ñïèñêå
-            Assert.assertFalse(listElements.isEmpty(), "Âî âõîäÿùèõ ñîîáùåíèÿõ ïèñåì íåò\n");
+            //проверяет наличие элементов в списке
+            Assert.assertFalse(listElements.isEmpty(), "Во входящих сообщениях писем нет\n");
 
-            //ãåíåðàöèÿ ñëó÷àéíîãî ÷èñëà â ïðåäåëàõ ðàçìåðà ñïèñêà
+            //генерация случайного числа в пределах размера списка
             i = new Random().nextInt(listElements.size() - 1);
 
-            //ïîëó÷èòü èç ñïèñêà ýëåìåíò ñî ñëó÷àéíûì íîìåðîì
+            //получить из списка элемент со случайным номером
             we = listElements.get(i);
 
-            //âûäåëèòü ñëó÷àéíîå ïèñüìî
+            //выделить случайное письмо
             we.click();
 
-            //ïîëó÷èòü ÷åêáîêñ âûäåëåííîãî ïèñüìà
+            //получить чекбокс выделенного письма
             we = driver.findElements(By.xpath("" +
                     "//input[@class='_nb-checkbox-input']")).get(i);
-            /*ýëåìåíò äàííîãî òèïà íå êëèêàáåëåí
+            /*элемент данного типа не кликабелен
             * */
 
-            //ïðîâåðÿåò, îòìå÷åò ëè ÷åêáîêñ
-            Assert.assertTrue(we.isSelected(), "Îøèáêà\n");
-            System.out.println("2. Ñîâïàäåíèå");
+            //проверяет, отмечет ли чекбокс
+            Assert.assertTrue(we.isSelected(), "Ошибка\n");
+            System.out.println("2. Совпадение");
 
             i = listElements.size();
 
-            //óäàëåíèå âûäåëåííîãî ïèñüìà
+            //удаление выделенного письма
             driver.findElement(By.xpath("//span[@class='mail-Toolbar-Item-Text " +
                     "js-toolbar-item-title js-toolbar-item-title-delete']")).click();
 
-            Thread.sleep(2000);//îæèäàåò 2 ñåêóíäû (äî íà÷àëà çàãðóçêè ñòðàíèöû)
+            Thread.sleep(2000);//ожидает 2 секунды (до начала загрузки страницы)
 
-            //ïðîâåðÿåò, ÷òî ïèñåì ñòàëî ìåíüøå
+            //проверяет, что писем стало меньше
             i2 = driver.findElements(By.xpath("" +
                     "//span[@class='_nb-checkbox-flag _nb-checkbox-normal-flag']")).size() + 1;
-            Assert.assertEquals(i2, i, "Îøèáêà\n");
-                System.out.println("3. Ñîâïàäåíèå\n");
+            Assert.assertEquals(i2, i, "Ошибка\n");
+                System.out.println("3. Совпадение\n");
         }
         catch (Exception e){
-            System.out.println("Îøèáêà: " + e + "\n");
+            System.out.println("Ошибка: " + e + "\n");
         }
     }
 
-    //Âûäåëåíèå ïèñåì
-    @Test(priority = 5)
+    //Выделение писем
+    @Test (priority = 5)
     public void Selection(){
         try{
             System.out.println("YA-4:");
-            //ïåðåéòè íà ãëàâíóþ ñòðàíèöó ßíäåêñ.Ïî÷òà
+            //перейти на главную страницу Яндекс.Почта
             driver.findElement(By.xpath("//div[@class='PSHeaderIcon PSHeaderIcon_Mail']")).click();
 
-            Thread.sleep(2000);//îæèäàåò 2 ñåêóíäû (äî íà÷àëà çàãðóçêè ñòðàíèöû)
+            Thread.sleep(2000);//ожидает 2 секунды (до начала загрузки страницы)
 
-            //ïðîâåðÿåò, ñîâïàäàåò ëè ññûëêà ñ ãëàâíîé ñòðàíèöåé ßíäåêñ.Ïî÷òà
+            //проверяет, совпадает ли ссылка с главной страницей Яндекс.Почта
             b = driver.getCurrentUrl().contains("https://mail.yandex.ru/") &&
                     driver.getCurrentUrl().contains("uid=1625522601#tabs/relevant");
-            Assert.assertTrue(b, "Îøèáêà\n");
-            System.out.println("1. Ñîâïàäåíèå");
+            Assert.assertTrue(b, "Ошибка\n");
+            System.out.println("1. Совпадение");
 
-            //ñîçä¸ò ñïèñîê èç âñåõ ýëåìåíòîâ ñîîáùåíèé
+            //создёт список из всех элементов сообщений
             List<WebElement> listElements = driver.findElements(By.xpath("" +
                     "//span[@class='_nb-checkbox-flag _nb-checkbox-normal-flag']"));
 
-            //ïðîâåðêà íà íàëè÷èå ïîäõîäÿùåãî ÷èñëà ýëåìåíòîâ â ñïèñêå
+            //проверка на наличие подходящего числа элементов в списке
             Assert.assertFalse(listElements.size() < 2,
-                    "Âî âõîäÿùèõ ñîîáùåíèÿõ òîëüêî îäíî ïèñüìî èëè èõ íåò\n");
+                    "Во входящих сообщениях только одно письмо или их нет\n");
 
-            //ãåíåðàöèÿ ïåðâîãî ñëó÷àéíîãî ÷èñëà â ïðåäåëàõ ðàçìåðà ñïèñêà
+            //генерация первого случайного числа в пределах размера списка
             i = new Random().nextInt(listElements.size() - 1);
 
-            //ïîëó÷èòü èç ñïèñêà ïåðâûé ýëåìåíò ñî ñëó÷àéíûì íîìåðîì
+            //получить из списка первый элемент со случайным номером
             we = listElements.get(i);
 
-            //âûäåëèòü ïåðâîå ñëó÷àéíîå ïèñüìî
+            //выделить первое случайное письмо
             we.click();
 
-            //ïîëó÷èòü ÷åêáîêñ ïåðâîãî âûäåëåííîãî ïèñüìà
+            //получить чекбокс первого выделенного письма
             we = driver.findElements(By.xpath("" +
                     "//input[@class='_nb-checkbox-input']")).get(i);
 
-            //ïðîâåðÿåò, îòìå÷åò ëè ïåðâûé ÷åêáîêñ
-            Assert.assertTrue(we.isSelected(), "Îøèáêà\n");
+            //проверяет, отмечет ли первый чекбокс
+            Assert.assertTrue(we.isSelected(), "Ошибка\n");
 
-            //ãåíåðàöèÿ âòîðîãî ñëó÷àéíîãî ÷èñëà â ïðåäåëàõ ðàçìåðà ñïèñêà
+            //генерация второго случайного числа в пределах размера списка
             i2 = new Random().nextInt(listElements.size() - 1);
 
-            //åñëè îáà ÷èñëà ðàâíû, òî âòîðîå ÷èñëî èçìåíÿåòñÿ
+            //если оба числа равны, то второе число изменяется
             while (i == i2){
                 i2 = new Random().nextInt(listElements.size() - 1);
             }
-            //ïîëó÷èòü èç ñïèñêà âòîðîé ýëåìåíò ñî ñëó÷àéíûì íîìåðîì
+            //получить из списка второй элемент со случайным номером
             we = listElements.get(i2);
 
-            //âûäåëèòü âòîðîå ñëó÷àéíîå ïèñüìî
+            //выделить второе случайное письмо
             we.click();
 
-            //ïîëó÷èòü ÷åêáîêñ âòîðîãî âûäåëåííîãî ïèñüìà
+            //получить чекбокс второго выделенного письма
             we = driver.findElements(By.xpath("" +
                     "//input[@class='_nb-checkbox-input']")).get(i2);
 
-            //ïðîâåðÿåò, îòìå÷åò ëè âòîðîé ÷åêáîêñ
-            Assert.assertTrue(we.isSelected(), "Îøèáêà\n");
-            System.out.println("2. Ñîâïàäåíèå\n");
+            //проверяет, отмечет ли второй чекбокс
+            Assert.assertTrue(we.isSelected(), "Ошибка\n");
+            System.out.println("2. Совпадение\n");
         }
         catch (Exception e){
-            System.out.println("Îøèáêà: " + e + "\n");
+            System.out.println("Ошибка: " + e + "\n");
         }
     }
 
-    //Îòïðàâêà ïèñüìà
-    @Test(priority = 6)
+    //Отправка письма
+    @Test (priority = 6)
     public void SendingLetter(){//WebDriver driver, WebDriverWait wait static
         try{
             System.out.println("YA-5:");
-            //ïåðåéòè íà ãëàâíóþ ñòðàíèöó ßíäåêñ.Ïî÷òà
+            //перейти на главную страницу Яндекс.Почта
             driver.findElement(By.xpath("//div[@class='PSHeaderIcon PSHeaderIcon_Mail']")).click();
 
-            Thread.sleep(2000);//îæèäàåò 2 ñåêóíäû (äî íà÷àëà çàãðóçêè ñòðàíèöû)
+            Thread.sleep(2000);//ожидает 2 секунды (до начала загрузки страницы)
 
-            //ïðîâåðÿåò, ñîâïàäàåò ëè ññûëêà ñ ãëàâíîé ñòðàíèöåé ßíäåêñ.Ïî÷òà
+            //проверяет, совпадает ли ссылка с главной страницей Яндекс.Почта
             b = driver.getCurrentUrl().contains("https://mail.yandex.ru/") &&
                     driver.getCurrentUrl().contains("uid=1625522601#tabs/relevant");
-            Assert.assertTrue(b, "Îøèáêà\n");
-            System.out.println("1. Ñîâïàäåíèå");
+            Assert.assertTrue(b, "Ошибка\n");
+            System.out.println("1. Совпадение");
 
-            //îòêðûòü ôîðìó ïèñüìà
+            //открыть форму письма
             driver.findElement(By.xpath("//a[@href='#compose']")).click();
 
-            //ïðîâåðÿåò, îòêðûëàñü ëè ôîðìà ïèñüìà
+            //проверяет, открылась ли форма письма
             b = driver.findElements(By.xpath("//div[@class='popup2 popup2_view_classic " +
                     "popup2_theme_normal popup2_direction_top-center popup2_nonvisual_yes " +
                     "popup2_visible_yes popup2_target_position popup2_motionless ComposePopup " +
                     "ComposePopup_size_large']")).size() > 0;
-            Assert.assertTrue(b, "Îøèáêà\n");
-            System.out.println("2. Ñîâïàäåíèå");
+            Assert.assertTrue(b, "Ошибка\n");
+            System.out.println("2. Совпадение");
 
             s = "anzh.mats@yandex.ru";
 
-            //ââåñòè email îòïðàâèòåëÿ (ñåáÿ)
+            //ввести email отправителя (себя)
             driver.findElement(By.xpath("//div[@class='composeYabbles']")).
                     sendKeys(s);
 
-            //ïðîâåðÿåò, ïðàâèëüíî ëè ââåä¸í îòïðàâèòåëü
+            //проверяет, правильно ли введён отправитель
             Assert.assertEquals(driver.findElement(By.xpath("//div[@class='composeYabbles']")).
-                    getText(), s, "Îøèáêà\n");
-            System.out.println("3. Ñîâïàäåíèå");
+                    getText(), s, "Ошибка\n");
+            System.out.println("3. Совпадение");
 
-            //ââåñòè òåìó ïèñüìà
+            //ввести тему письма
             s = "Test Letter";
             driver.findElement(By.xpath("//input[@name='subject']")).sendKeys(s);
 
-            //ïðîâåðÿåò, ïðàâèëüíî ëè ââåäåíà òåìà ïèñüìà
+            //проверяет, правильно ли введена тема письма
             Assert.assertEquals(driver.findElement(By.xpath("//input[@name='subject']")).
-                    getAttribute("value"), s, "Îøèáêà\n");
-            /** Ò.ê. â ñðîêå òåìû òåêñò çàïèñûâàåòñÿ íå âî âíóòðü ýëåìåíòà,
-             * getText() íå ìîæåò åãî ñ÷èòàòü*/
-            System.out.println("4. Ñîâïàäåíèå");
+                    getAttribute("value"), s, "Ошибка\n");
+            /** Т.к. в сроке темы текст записывается не во внутрь элемента,
+             * getText() не может его считать*/
+            System.out.println("4. Совпадение");
 
-            //îòïðàâèòü ïèñüìî
+            //отправить письмо
             driver.findElement(By.xpath("//button[@class='Button2 " +
                     "Button2_pin_circle-circle Button2_view_default Button2_size_l']")).click();
 
-            //ïðîâåðÿåò, ïîÿâèëîñü ëè ïðåäóïðåæäåíèå, ïðàâèëüíîñòü òåêñòà ñîîáùåíèÿ è çàêðûëàñü ëè ôîðìà ïèñüìà
+            //проверяет, появилось ли предупреждение, правильность текста сообщения и закрылась ли форма письма
             b =     driver.findElements(By.xpath("//div[@class='popup2 popup2_view_classic " +
                             "popup2_direction_bottom-left popup2_visible_yes popup2_target_position " +
                             "popup2_motionless ComposeDoneScreen']")).size() > 0
                 &&
-                    driver.findElements(By.xpath("//span[text()='Ïèñüìî îòïðàâëåíî']")).size() > 0
+                    driver.findElements(By.xpath("//span[text()='Письмо отправлено']")).size() > 0
                 &&
                     driver.findElements(By.xpath("//div[@class='popup2 popup2_view_classic " +
                             "popup2_theme_normal popup2_direction_top-center popup2_nonvisual_yes " +
                             "popup2_visible_yes popup2_target_position popup2_motionless ComposePopup " +
                             "ComposePopup_size_large']")).isEmpty();
-            Assert.assertTrue(b, "Îøèáêà\n");
-            System.out.println("5. Ñîâïàäåíèå\n");
+            Assert.assertTrue(b, "Ошибка\n");
+            System.out.println("5. Совпадение\n");
         }
         catch (Exception e){
-            System.out.println("Îøèáêà: " + e + "\n");
+            System.out.println("Ошибка: " + e + "\n");
         }
     }
 
-    //Îòïðàâêà ïèñüìà áåç óêàçàíèÿ àäðåñà ïîëó÷àòåëÿ è òåìû
-    @Test(priority = 7)
+    //Отправка письма без указания адреса получателя и темы
+    @Test (priority = 7)
     public void LetterWithoutAddressSubject(){
         try{
             System.out.println("YA-6.1:");
-            //ïåðåéòè íà ãëàâíóþ ñòðàíèöó ßíäåêñ.Ïî÷òà
+            //перейти на главную страницу Яндекс.Почта
             driver.findElement(By.xpath("//div[@class='PSHeaderIcon PSHeaderIcon_Mail']")).click();
 
-            Thread.sleep(2000);//îæèäàåò 2 ñåêóíäû (äî íà÷àëà çàãðóçêè ñòðàíèöû)
+            Thread.sleep(2000);//ожидает 2 секунды (до начала загрузки страницы)
 
-            //ïðîâåðÿåò, ñîâïàäàåò ëè ññûëêà ñ ãëàâíîé ñòðàíèöåé ßíäåêñ.Ïî÷òà
+            //проверяет, совпадает ли ссылка с главной страницей Яндекс.Почта
             b = driver.getCurrentUrl().contains("https://mail.yandex.ru/") &&
                     driver.getCurrentUrl().contains("uid=1625522601#tabs/relevant");
-            Assert.assertTrue(b, "Îøèáêà\n");
-            System.out.println("1. Ñîâïàäåíèå");
+            Assert.assertTrue(b, "Ошибка\n");
+            System.out.println("1. Совпадение");
 
-            //îòêðûòü ôîðìó ïèñüìà
+            //открыть форму письма
             driver.findElement(By.xpath("//a[@href='#compose']")).click();
 
-            //ïðîâåðÿåò, îòêðûëàñü ëè ôîðìà ïèñüìà
+            //проверяет, открылась ли форма письма
             b = driver.findElements(By.xpath("//div[@class='popup2 popup2_view_classic " +
                     "popup2_theme_normal popup2_direction_top-center popup2_nonvisual_yes " +
                     "popup2_visible_yes popup2_target_position popup2_motionless ComposePopup " +
                     "ComposePopup_size_large']")).size() > 0;
-            Assert.assertTrue(b, "Îøèáêà\n");
-            System.out.println("2. Ñîâïàäåíèå");
+            Assert.assertTrue(b, "Ошибка\n");
+            System.out.println("2. Совпадение");
 
-            //îòïðàâèòü ïèñüìî
+            //отправить письмо
             driver.findElement(By.xpath("//button[@class='Button2 " +
                     "Button2_pin_circle-circle Button2_view_default Button2_size_l']")).click();
 
-            //ïðîâåðÿåò, ïîÿâèëîñü ëè ïðåäóïðåæäåíèå, ïðàâèëüíîñòü òåêñòà ñîîáùåíèÿ è çàêðûëàñü ëè ôîðìà ïèñüìà
+            //проверяет, появилось ли предупреждение, правильность текста сообщения и закрылась ли форма письма
             b =     driver.findElements(By.xpath("//div[@class='modal__content']")).size() > 0
                 &&
-                    driver.findElements(By.xpath("//span[text()='Ïèñüìî íå îòïðàâëåíî']")).size() > 0
+                    driver.findElements(By.xpath("//span[text()='Письмо не отправлено']")).size() > 0
                 &&
                     driver.findElements(By.xpath("//span[" +
-                            "text()='Ïîæàëóéñòà, óêàæèòå àäðåñ ïîëó÷àòåëÿ']")).size() > 0
+                            "text()='Пожалуйста, укажите адрес получателя']")).size() > 0
                 &&
                     driver.findElements(By.xpath("//div[@class='popup2 popup2_view_classic " +
                             "popup2_theme_normal popup2_direction_top-center popup2_nonvisual_yes " +
                             "popup2_visible_yes popup2_target_position popup2_motionless ComposePopup " +
                             "ComposePopup_size_large']")).size() > 0;
 
-            //çàêðûâàåò ïðåäóïðåæäåíèå
+            //закрывает предупреждение
             driver.findElement(By.xpath("//button[@class='control button2 " +
                     "button2_view_default button2_tone_default button2_size_xs button2_theme_clear " +
                     "ComposeConfirmPopup-Close']")).click();
 
-            Assert.assertTrue(b, "Îøèáêà\n");
-            System.out.println("3. Ñîâïàäåíèå\n");
+            Assert.assertTrue(b, "Ошибка\n");
+            System.out.println("3. Совпадение\n");
 
         }
         catch (Exception e){
-            System.out.println("Îøèáêà: " + e + "\n");
+            System.out.println("Ошибка: " + e + "\n");
         }
     }
 
-    //Îòïðàâêà ïèñüìà áåç óêàçàíèÿ àäðåñà ïîëó÷àòåëÿ
-    @Test(priority = 8)
+    //Отправка письма без указания адреса получателя
+    @Test (priority = 8)
     public void LetterWithoutAddress(){
         try{
             System.out.println("YA-6.2:");
-            //ïåðåéòè íà ãëàâíóþ ñòðàíèöó ßíäåêñ.Ïî÷òà
+            //перейти на главную страницу Яндекс.Почта
             driver.findElement(By.xpath("//div[@class='PSHeaderIcon PSHeaderIcon_Mail']")).click();
 
-            Thread.sleep(2000);//îæèäàåò 2 ñåêóíäû (äî íà÷àëà çàãðóçêè ñòðàíèöû)
+            Thread.sleep(2000);//ожидает 2 секунды (до начала загрузки страницы)
 
-            //ïðîâåðÿåò, ñîâïàäàåò ëè ññûëêà ñ ãëàâíîé ñòðàíèöåé ßíäåêñ.Ïî÷òà
+            //проверяет, совпадает ли ссылка с главной страницей Яндекс.Почта
             b = driver.getCurrentUrl().contains("https://mail.yandex.ru/") &&
                     driver.getCurrentUrl().contains("uid=1625522601#tabs/relevant");
-            Assert.assertTrue(b, "Îøèáêà\n");
-            System.out.println("1. Ñîâïàäåíèå");
+            Assert.assertTrue(b, "Ошибка\n");
+            System.out.println("1. Совпадение");
 
-            //îòêðûòü ôîðìó ïèñüìà
+            //открыть форму письма
             driver.findElement(By.xpath("//a[@href='#compose']")).click();
 
-            //ïðîâåðÿåò, îòêðûëàñü ëè ôîðìà ïèñüìà
+            //проверяет, открылась ли форма письма
             b = driver.findElements(By.xpath("//div[@class='popup2 popup2_view_classic " +
                     "popup2_theme_normal popup2_direction_top-center popup2_nonvisual_yes " +
                     "popup2_visible_yes popup2_target_position popup2_motionless ComposePopup " +
                     "ComposePopup_size_large']")).size() > 0;
-            Assert.assertTrue(b, "Îøèáêà\n");
-            System.out.println("2. Ñîâïàäåíèå");
+            Assert.assertTrue(b, "Ошибка\n");
+            System.out.println("2. Совпадение");
 
-            //ââåñòè òåìó ïèñüìà
+            //ввести тему письма
             s = "Test Letter";
             driver.findElement(By.xpath("//input[@name='subject']")).sendKeys(s);
 
-            //ïðîâåðÿåò, ïðàâèëüíî ëè ââåäåíà òåìà ïèñüìà
+            //проверяет, правильно ли введена тема письма
             Assert.assertEquals(driver.findElement(By.xpath("//input[@name='subject']")).
-                    getAttribute("value"), s, "Îøèáêà\n");
-            System.out.println("3. Ñîâïàäåíèå");
+                    getAttribute("value"), s, "Ошибка\n");
+            System.out.println("3. Совпадение");
 
-            //îòïðàâèòü ïèñüìî
+            //отправить письмо
             driver.findElement(By.xpath("//button[@class='Button2 " +
                     "Button2_pin_circle-circle Button2_view_default Button2_size_l']")).click();
 
-            //ïðîâåðÿåò, ïîÿâèëîñü ëè ïðåäóïðåæäåíèå, ïðàâèëüíîñòü òåêñòà ñîîáùåíèÿ è çàêðûëàñü ëè ôîðìà ïèñüìà
+            //проверяет, появилось ли предупреждение, правильность текста сообщения и закрылась ли форма письма
             b =     driver.findElements(By.xpath("//div[@class='modal__content']")).size() > 0
                 &&
-                    driver.findElements(By.xpath("//span[text()='Ïèñüìî íå îòïðàâëåíî']")).size() > 0
+                    driver.findElements(By.xpath("//span[text()='Письмо не отправлено']")).size() > 0
                 &&
                     driver.findElements(By.xpath("//span[" +
-                            "text()='Ïîæàëóéñòà, óêàæèòå àäðåñ ïîëó÷àòåëÿ']")).size() > 0
+                            "text()='Пожалуйста, укажите адрес получателя']")).size() > 0
                 &&
                     driver.findElements(By.xpath("//div[@class='popup2 popup2_view_classic " +
                             "popup2_theme_normal popup2_direction_top-center popup2_nonvisual_yes " +
                             "popup2_visible_yes popup2_target_position popup2_motionless ComposePopup " +
                             "ComposePopup_size_large']")).size() > 0;
 
-            //çàêðûâàåò ïðåäóïðåæäåíèå
+            //закрывает предупреждение
             driver.findElement(By.xpath("//button[@class='control button2 " +
                     "button2_view_default button2_tone_default button2_size_xs button2_theme_clear " +
                     "ComposeConfirmPopup-Close']")).click();
 
-            Assert.assertTrue(b, "Îøèáêà\n");
-            System.out.println("4. Ñîâïàäåíèå\n");
+            Assert.assertTrue(b, "Ошибка\n");
+            System.out.println("4. Совпадение\n");
         }
         catch (Exception e){
-            System.out.println("Îøèáêà: " + e + "\n");
+            System.out.println("Ошибка: " + e + "\n");
         }
     }
 
-    //Îòïðàâêà ïèñüìà áåç óêàçàíèÿ òåìû
-    @Test(priority = 9)
+    //Отправка письма без указания темы
+    @Test (priority = 9)
     public void LetterWithoutSubject(){
         try{
             System.out.println("YA-6.3:");
-            //ïåðåéòè íà ãëàâíóþ ñòðàíèöó ßíäåêñ.Ïî÷òà
+            //перейти на главную страницу Яндекс.Почта
             driver.findElement(By.xpath("//div[@class='PSHeaderIcon PSHeaderIcon_Mail']")).click();
 
-            Thread.sleep(2000);//îæèäàåò 2 ñåêóíäû (äî íà÷àëà çàãðóçêè ñòðàíèöû)
+            Thread.sleep(2000);//ожидает 2 секунды (до начала загрузки страницы)
 
-            //ïðîâåðÿåò, ñîâïàäàåò ëè ññûëêà ñ ãëàâíîé ñòðàíèöåé ßíäåêñ.Ïî÷òà
+            //проверяет, совпадает ли ссылка с главной страницей Яндекс.Почта
             b = driver.getCurrentUrl().contains("https://mail.yandex.ru/") &&
                     driver.getCurrentUrl().contains("uid=1625522601#tabs/relevant");
-            Assert.assertTrue(b, "Îøèáêà\n");
-            System.out.println("1. Ñîâïàäåíèå");
+            Assert.assertTrue(b, "Ошибка\n");
+            System.out.println("1. Совпадение");
 
-            //îòêðûòü ôîðìó ïèñüìà
+            //открыть форму письма
             driver.findElement(By.xpath("//a[@href='#compose']")).click();
 
-            //ïðîâåðÿåò, îòêðûëàñü ëè ôîðìà ïèñüìà
+            //проверяет, открылась ли форма письма
             b = driver.findElements(By.xpath("//div[@class='popup2 popup2_view_classic " +
                     "popup2_theme_normal popup2_direction_top-center popup2_nonvisual_yes " +
                     "popup2_visible_yes popup2_target_position popup2_motionless ComposePopup " +
                     "ComposePopup_size_large']")).size() > 0;
-            Assert.assertTrue(b, "Îøèáêà\n");
-            System.out.println("2. Ñîâïàäåíèå");
+            Assert.assertTrue(b, "Ошибка\n");
+            System.out.println("2. Совпадение");
 
-            //ââåñòè email îòïðàâèòåëÿ (ñåáÿ)
+            //ввести email отправителя (себя)
             s = "anzh.mats@yandex.ru";
             driver.findElement(By.xpath("//div[@class='composeYabbles']")).
                     sendKeys(s);
 
-            //ïðîâåðÿåò, ïðàâèëüíî ëè ââåä¸í îòïðàâèòåëü
+            //проверяет, правильно ли введён отправитель
             Assert.assertEquals(driver.findElement(By.xpath("//div[@class='composeYabbles']")).
-                    getText(), s, "Îøèáêà\n");
-            System.out.println("3. Ñîâïàäåíèå");
+                    getText(), s, "Ошибка\n");
+            System.out.println("3. Совпадение");
 
-            //îòïðàâèòü ïèñüìî
+            //отправить письмо
             driver.findElement(By.xpath("//button[@class='Button2 " +
                     "Button2_pin_circle-circle Button2_view_default Button2_size_l']")).click();
 
-            //ïðîâåðÿåò, ïîÿâèëîñü ëè ïðåäóïðåæäåíèå, ïðàâèëüíîñòü òåêñòà ñîîáùåíèÿ è çàêðûëàñü ëè ôîðìà ïèñüìà
+            //проверяет, появилось ли предупреждение, правильность текста сообщения и закрылась ли форма письма
             b =     driver.findElements(By.xpath("//div[@class='modal__content']")).size() > 0
                 &&
-                    driver.findElements(By.xpath("//span[text()='Âíèìàíèå!']")).size() > 0
+                    driver.findElements(By.xpath("//span[text()='Внимание!']")).size() > 0
                 &&
                     driver.findElements(By.xpath("//span[" +
-                            "text()='Âàøå ïèñüìî ïîêà íå îòïðàâëåíî']")).size() > 0
+                            "text()='Ваше письмо пока не отправлено']")).size() > 0
                 &&
                     driver.findElements(By.xpath("//div[@class='popup2 popup2_view_classic " +
                             "popup2_theme_normal popup2_direction_top-center popup2_nonvisual_yes " +
                             "popup2_visible_yes popup2_target_position popup2_motionless ComposePopup " +
                             "ComposePopup_size_large']")).size() > 0;
-            Assert.assertTrue(b, "Îøèáêà\n");
-            /**Íà äàííîì ýòàïå áóäåò âûâîäèòüñÿ îøèáêà,
-             * ò.ê. ßíäåêñ.Ïî÷òà ïðåäîñòàâëÿåò âîçìîæíîñòü
-             * îòïðàâëÿòü ïèñüìà áåç òåìû*/
-            System.out.println("4. Ñîâïàäåíèå\n");
+            Assert.assertTrue(b, "Ошибка\n");
+            /**На данном этапе будет выводиться ошибка,
+             * т.к. Яндекс.Почта предоставляет возможность
+             * отправлять письма без темы*/
+            System.out.println("4. Совпадение\n");
         }
         catch (Exception e){
-            System.out.println("Îøèáêà: " + e + "\n");
+            System.out.println("Ошибка: " + e + "\n");
         }
     }
 
-    //Îòïðàâêà ïèñüìà ñ íåêîððåêòíûì àäðåñîì ïîëó÷àòåëÿ (áåç @)
-    @Test(priority = 10)
+    //Отправка письма с некорректным адресом получателя (без @)
+    @Test (priority = 10)
     public void SendingLetterInvalidAddress1(){
         try{
             System.out.println("YA-6.4.1:");
-            //ïåðåéòè íà ãëàâíóþ ñòðàíèöó ßíäåêñ.Ïî÷òà
+            //перейти на главную страницу Яндекс.Почта
             driver.findElement(By.xpath("//div[@class='PSHeaderIcon PSHeaderIcon_Mail']")).click();
 
-            Thread.sleep(2000);//îæèäàåò 2 ñåêóíäû (äî íà÷àëà çàãðóçêè ñòðàíèöû)
+            Thread.sleep(2000);//ожидает 2 секунды (до начала загрузки страницы)
 
-            //ïðîâåðÿåò, ñîâïàäàåò ëè ññûëêà ñ ãëàâíîé ñòðàíèöåé ßíäåêñ.Ïî÷òà
+            //проверяет, совпадает ли ссылка с главной страницей Яндекс.Почта
             b = driver.getCurrentUrl().contains("https://mail.yandex.ru/") &&
                     driver.getCurrentUrl().contains("uid=1625522601#tabs/relevant");
-            Assert.assertTrue(b, "Îøèáêà\n");
-            System.out.println("1. Ñîâïàäåíèå");
+            Assert.assertTrue(b, "Ошибка\n");
+            System.out.println("1. Совпадение");
 
-            //îòêðûòü ôîðìó ïèñüìà
+            //открыть форму письма
             driver.findElement(By.xpath("//a[@href='#compose']")).click();
 
-            //ïðîâåðÿåò, îòêðûëàñü ëè ôîðìà ïèñüìà
+            //проверяет, открылась ли форма письма
             b = driver.findElements(By.xpath("//div[@class='popup2 popup2_view_classic " +
                     "popup2_theme_normal popup2_direction_top-center popup2_nonvisual_yes " +
                     "popup2_visible_yes popup2_target_position popup2_motionless ComposePopup " +
                     "ComposePopup_size_large']")).size() > 0;
-            Assert.assertTrue(b, "Îøèáêà\n");
-            System.out.println("2. Ñîâïàäåíèå");
+            Assert.assertTrue(b, "Ошибка\n");
+            System.out.println("2. Совпадение");
 
-            //ââåñòè email îòïðàâèòåëÿ (ñåáÿ) áåç @
+            //ввести email отправителя (себя) без @
             s = "anzh.matsyandex.ru";
             driver.findElement(By.xpath("//div[@class='composeYabbles']")).
                     sendKeys(s);
 
-            //ïðîâåðÿåò, ñîâïàäàåò ëè ââåä¸íûé îòïðàâèòåëü ñ ïëàíèðóåìûì
+            //проверяет, совпадает ли введёный отправитель с планируемым
             Assert.assertEquals(driver.findElement(By.xpath("//div[@class='composeYabbles']")).
-                    getText(), s, "Îøèáêà\n");
-            System.out.println("3. Ñîâïàäåíèå");
+                    getText(), s, "Ошибка\n");
+            System.out.println("3. Совпадение");
 
-            //ââåñòè òåìó ïèñüìà
+            //ввести тему письма
             s = "Test Letter";
             driver.findElement(By.xpath("//input[@name='subject']")).sendKeys(s);
 
-            //ïðîâåðÿåò, ïðàâèëüíî ëè ââåäåíà òåìà ïèñüìà
+            //проверяет, правильно ли введена тема письма
             Assert.assertEquals(driver.findElement(By.xpath("//input[@name='subject']")).
-                    getAttribute("value"), s, "Îøèáêà\n");
-            System.out.println("4. Ñîâïàäåíèå");
+                    getAttribute("value"), s, "Ошибка\n");
+            System.out.println("4. Совпадение");
 
-            //îòïðàâèòü ïèñüìî
+            //отправить письмо
             driver.findElement(By.xpath("//button[@class='Button2 " +
                     "Button2_pin_circle-circle Button2_view_default Button2_size_l']")).click();
 
-            //ïðîâåðÿåò, ïîÿâèëîñü ëè ïðåäóïðåæäåíèå, ïðàâèëüíîñòü òåêñòà ñîîáùåíèÿ è çàêðûëàñü ëè ôîðìà ïèñüìà
+            //проверяет, появилось ли предупреждение, правильность текста сообщения и закрылась ли форма письма
             b = driver.findElements(By.xpath("//div[@class='modal__content']")).size() > 0
                 &&
-                    driver.findElements(By.xpath("//span[text()='Ïðîâåðüòå ïîëó÷àòåëÿ']")).size() > 0
+                    driver.findElements(By.xpath("//span[text()='Проверьте получателя']")).size() > 0
                 &&
                     driver.findElements(By.xpath("//span[" +
-                            "text()='Ïîõîæå, ÷òî-òî íå òàê ñ àäðåñîì: anzh.matsyandex.ru.']")).size() > 0
+                            "text()='Похоже, что-то не так с адресом: anzh.matsyandex.ru.']")).size() > 0
                 &&
                     driver.findElements(By.xpath("//div[@class='popup2 popup2_view_classic " +
                             "popup2_theme_normal popup2_direction_top-center popup2_nonvisual_yes " +
                             "popup2_visible_yes popup2_target_position popup2_motionless ComposePopup " +
                             "ComposePopup_size_large']")).size() > 0;
 
-            //çàêðûâàåò ïðåäóïðåæäåíèå
+            //закрывает предупреждение
             driver.findElement(By.xpath("//button[@class='control button2 " +
                     "button2_view_default button2_tone_default button2_size_xs button2_theme_clear " +
                     "ComposeConfirmPopup-Close']")).click();
 
-            Assert.assertTrue(b, "Îøèáêà\n");
-            System.out.println("5. Ñîâïàäåíèå\n");
+            Assert.assertTrue(b, "Ошибка\n");
+            System.out.println("5. Совпадение\n");
         }
         catch (Exception e){
-            System.out.println("Îøèáêà: " + e + "\n");
+            System.out.println("Ошибка: " + e + "\n");
         }
     }
 
-    //Îòïðàâêà ïèñüìà ñ íåêîððåêòíûì àäðåñîì ïîëó÷àòåëÿ (ñîäåðæàùèé @ @)
-    @Test(priority = 11)
+    //Отправка письма с некорректным адресом получателя (содержащий @ @)
+    @Test (priority = 11)
     public void SendingLetterInvalidAddress2(){
         try{
             System.out.println("YA-6.4.2:");
-            //ïåðåéòè íà ãëàâíóþ ñòðàíèöó ßíäåêñ.Ïî÷òà
+            //перейти на главную страницу Яндекс.Почта
             driver.findElement(By.xpath("//div[@class='PSHeaderIcon PSHeaderIcon_Mail']")).click();
 
-            Thread.sleep(2000);//îæèäàåò 2 ñåêóíäû (äî íà÷àëà çàãðóçêè ñòðàíèöû)
+            Thread.sleep(2000);//ожидает 2 секунды (до начала загрузки страницы)
 
-            //ïðîâåðÿåò, ñîâïàäàåò ëè ññûëêà ñ ãëàâíîé ñòðàíèöåé ßíäåêñ.Ïî÷òà
+            //проверяет, совпадает ли ссылка с главной страницей Яндекс.Почта
             b = driver.getCurrentUrl().contains("https://mail.yandex.ru/") &&
                     driver.getCurrentUrl().contains("uid=1625522601#tabs/relevant");
-            Assert.assertTrue(b, "Îøèáêà\n");
-            System.out.println("1. Ñîâïàäåíèå");
+            Assert.assertTrue(b, "Ошибка\n");
+            System.out.println("1. Совпадение");
 
-            //îòêðûòü ôîðìó ïèñüìà
+            //открыть форму письма
             driver.findElement(By.xpath("//a[@href='#compose']")).click();
 
-            //ïðîâåðÿåò, îòêðûëàñü ëè ôîðìà ïèñüìà
+            //проверяет, открылась ли форма письма
             b = driver.findElements(By.xpath("//div[@class='popup2 popup2_view_classic " +
                     "popup2_theme_normal popup2_direction_top-center popup2_nonvisual_yes " +
                     "popup2_visible_yes popup2_target_position popup2_motionless ComposePopup " +
                     "ComposePopup_size_large']")).size() > 0;
-            Assert.assertTrue(b, "Îøèáêà\n");
-            System.out.println("2. Ñîâïàäåíèå");
+            Assert.assertTrue(b, "Ошибка\n");
+            System.out.println("2. Совпадение");
 
-            //ââåñòè email îòïðàâèòåëÿ (ñåáÿ) ñ @@
+            //ввести email отправителя (себя) с @@
             s = "anzh.mats@@yandex.ru";
             driver.findElement(By.xpath("//div[@class='composeYabbles']")).
                     sendKeys(s);
 
-            //ïðîâåðÿåò, ñîâïàäàåò ëè ââåä¸íûé îòïðàâèòåëü ñ ïëàíèðóåìûì
+            //проверяет, совпадает ли введёный отправитель с планируемым
             Assert.assertEquals(driver.findElement(By.xpath("//div[@class='composeYabbles']")).
-                    getText(), s, "Îøèáêà\n");
-            System.out.println("3. Ñîâïàäåíèå");
+                    getText(), s, "Ошибка\n");
+            System.out.println("3. Совпадение");
 
-            //ââåñòè òåìó ïèñüìà
+            //ввести тему письма
             s = "Test Letter";
             driver.findElement(By.xpath("//input[@name='subject']")).sendKeys(s);
 
-            //ïðîâåðÿåò, ïðàâèëüíî ëè ââåäåíà òåìà ïèñüìà
+            //проверяет, правильно ли введена тема письма
             Assert.assertEquals(driver.findElement(By.xpath("//input[@name='subject']")).
-                    getAttribute("value"), s, "Îøèáêà\n");
-            System.out.println("4. Ñîâïàäåíèå");
+                    getAttribute("value"), s, "Ошибка\n");
+            System.out.println("4. Совпадение");
 
-            //îòïðàâèòü ïèñüìî
+            //отправить письмо
             driver.findElement(By.xpath("//button[@class='Button2 " +
                     "Button2_pin_circle-circle Button2_view_default Button2_size_l']")).click();
 
-            //ïðîâåðÿåò, ïîÿâèëîñü ëè ïðåäóïðåæäåíèå, ïðàâèëüíîñòü òåêñòà ñîîáùåíèÿ è çàêðûëàñü ëè ôîðìà ïèñüìà
+            //проверяет, появилось ли предупреждение, правильность текста сообщения и закрылась ли форма письма
             b = driver.findElements(By.xpath("//div[@class='modal__content']")).size() > 0
                     &&
-                    driver.findElements(By.xpath("//span[text()='Ïðîâåðüòå ïîëó÷àòåëÿ']")).size() > 0
+                    driver.findElements(By.xpath("//span[text()='Проверьте получателя']")).size() > 0
                     &&
                     driver.findElements(By.xpath("//span[" +
-                            "text()='Ïîõîæå, ÷òî-òî íå òàê ñ àäðåñîì: anzh.mats@@yandex.ru.']")).size() > 0
+                            "text()='Похоже, что-то не так с адресом: anzh.mats@@yandex.ru.']")).size() > 0
                     &&
                     driver.findElements(By.xpath("//div[@class='popup2 popup2_view_classic " +
                             "popup2_theme_normal popup2_direction_top-center popup2_nonvisual_yes " +
                             "popup2_visible_yes popup2_target_position popup2_motionless ComposePopup " +
                             "ComposePopup_size_large']")).size() > 0;
 
-            //çàêðûâàåò ïðåäóïðåæäåíèå
+            //закрывает предупреждение
             driver.findElement(By.xpath("//button[@class='control button2 " +
                     "button2_view_default button2_tone_default button2_size_xs button2_theme_clear " +
                     "ComposeConfirmPopup-Close']")).click();
 
-            Assert.assertTrue(b, "Îøèáêà\n");
-            System.out.println("5. Ñîâïàäåíèå\n");
+            Assert.assertTrue(b, "Ошибка\n");
+            System.out.println("5. Совпадение\n");
         }
         catch (Exception e){
-            System.out.println("Îøèáêà: " + e + "\n");
+            System.out.println("Ошибка: " + e + "\n");
         }
     }
 
-    //Îòïðàâêà ïèñüìà ñ íåêîððåêòíûì àäðåñîì ïîëó÷àòåëÿ (áåç äîìåíà)
-    @Test(priority = 12)
+    //Отправка письма с некорректным адресом получателя (без домена)
+    @Test (priority = 12)
     public void SendingLetterInvalidAddress3(){
         try{
             System.out.println("YA-6.4.3:");
-            //ïåðåéòè íà ãëàâíóþ ñòðàíèöó ßíäåêñ.Ïî÷òà
+            //перейти на главную страницу Яндекс.Почта
             driver.findElement(By.xpath("//div[@class='PSHeaderIcon PSHeaderIcon_Mail']")).click();
 
-            Thread.sleep(2000);//îæèäàåò 2 ñåêóíäû (äî íà÷àëà çàãðóçêè ñòðàíèöû)
+            Thread.sleep(2000);//ожидает 2 секунды (до начала загрузки страницы)
 
-            //ïðîâåðÿåò, ñîâïàäàåò ëè ññûëêà ñ ãëàâíîé ñòðàíèöåé ßíäåêñ.Ïî÷òà
+            //проверяет, совпадает ли ссылка с главной страницей Яндекс.Почта
             b = driver.getCurrentUrl().contains("https://mail.yandex.ru/") &&
                     driver.getCurrentUrl().contains("uid=1625522601#tabs/relevant");
-            Assert.assertTrue(b, "Îøèáêà\n");
-            System.out.println("1. Ñîâïàäåíèå");
+            Assert.assertTrue(b, "Ошибка\n");
+            System.out.println("1. Совпадение");
 
-            //îòêðûòü ôîðìó ïèñüìà
+            //открыть форму письма
             driver.findElement(By.xpath("//a[@href='#compose']")).click();
 
-            //ïðîâåðÿåò, îòêðûëàñü ëè ôîðìà ïèñüìà
+            //проверяет, открылась ли форма письма
             b = driver.findElements(By.xpath("//div[@class='popup2 popup2_view_classic " +
                     "popup2_theme_normal popup2_direction_top-center popup2_nonvisual_yes " +
                     "popup2_visible_yes popup2_target_position popup2_motionless ComposePopup " +
                     "ComposePopup_size_large']")).size() > 0;
-            Assert.assertTrue(b, "Îøèáêà\n");
-            System.out.println("2. Ñîâïàäåíèå");
+            Assert.assertTrue(b, "Ошибка\n");
+            System.out.println("2. Совпадение");
 
-            //ââåñòè email îòïðàâèòåëÿ (ñåáÿ) áåç äîìåíà
+            //ввести email отправителя (себя) без домена
             s = "anzh.mats@";
             driver.findElement(By.xpath("//div[@class='composeYabbles']")).
                     sendKeys(s);
 
-            //ïðîâåðÿåò, ñîâïàäàåò ëè ââåä¸íûé îòïðàâèòåëü ñ ïëàíèðóåìûì
+            //проверяет, совпадает ли введёный отправитель с планируемым
             Assert.assertEquals(driver.findElement(By.xpath("//div[@class='composeYabbles']")).
-                    getText(), s, "Îøèáêà\n");
-            System.out.println("3. Ñîâïàäåíèå");
+                    getText(), s, "Ошибка\n");
+            System.out.println("3. Совпадение");
 
-            //ââåñòè òåìó ïèñüìà
+            //ввести тему письма
             s = "Test Letter";
             driver.findElement(By.xpath("//input[@name='subject']")).sendKeys(s);
 
-            //ïðîâåðÿåò, ïðàâèëüíî ëè ââåäåíà òåìà ïèñüìà
+            //проверяет, правильно ли введена тема письма
             Assert.assertEquals(driver.findElement(By.xpath("//input[@name='subject']")).
-                    getAttribute("value"), s, "Îøèáêà\n");
-            System.out.println("4. Ñîâïàäåíèå");
+                    getAttribute("value"), s, "Ошибка\n");
+            System.out.println("4. Совпадение");
 
-            //îòïðàâèòü ïèñüìî
+            //отправить письмо
             driver.findElement(By.xpath("//button[@class='Button2 " +
                     "Button2_pin_circle-circle Button2_view_default Button2_size_l']")).click();
 
-            //ïðîâåðÿåò, ïîÿâèëîñü ëè ïðåäóïðåæäåíèå, ïðàâèëüíîñòü òåêñòà ñîîáùåíèÿ è çàêðûëàñü ëè ôîðìà ïèñüìà
+            //проверяет, появилось ли предупреждение, правильность текста сообщения и закрылась ли форма письма
             b = driver.findElements(By.xpath("//div[@class='modal__content']")).size() > 0
                     &&
-                    driver.findElements(By.xpath("//span[text()='Ïðîâåðüòå ïîëó÷àòåëÿ']")).size() > 0
+                    driver.findElements(By.xpath("//span[text()='Проверьте получателя']")).size() > 0
                     &&
                     driver.findElements(By.xpath("//span[" +
-                            "text()='Ïîõîæå, ÷òî-òî íå òàê ñ àäðåñîì: anzh.mats@.']")).size() > 0
+                            "text()='Похоже, что-то не так с адресом: anzh.mats@.']")).size() > 0
                     &&
                     driver.findElements(By.xpath("//div[@class='popup2 popup2_view_classic " +
                             "popup2_theme_normal popup2_direction_top-center popup2_nonvisual_yes " +
                             "popup2_visible_yes popup2_target_position popup2_motionless ComposePopup " +
                             "ComposePopup_size_large']")).size() > 0;
 
-            //çàêðûâàåò ïðåäóïðåæäåíèå
+            //закрывает предупреждение
             driver.findElement(By.xpath("//button[@class='control button2 " +
                     "button2_view_default button2_tone_default button2_size_xs button2_theme_clear " +
                     "ComposeConfirmPopup-Close']")).click();
 
-            Assert.assertTrue(b, "Îøèáêà\n");
-            System.out.println("5. Ñîâïàäåíèå\n");
+            Assert.assertTrue(b, "Ошибка\n");
+            System.out.println("5. Совпадение\n");
         }
         catch (Exception e){
-            System.out.println("Îøèáêà: " + e + "\n");
+            System.out.println("Ошибка: " + e + "\n");
         }
     }
 }
